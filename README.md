@@ -137,7 +137,7 @@ We train two reference models:
 
 Idea: re‑train only on the retain set, hoping the forget class information fades away.
 
-- Objective: $min_{\theta} \mathbb{E}_{(x_r,y_r)\in D_r} \mathrm{CE}(p_\theta(y_r\mid x_r), y_r)$
+- Objective: $\min_{\theta} \mathbb{E}_{(x_r,y_r)\in D_r} \mathrm{CE}(p_\theta(y_r\mid x_r), y_r)$
 - Implementation: reuse standard training but feed only `retain` data.
 
 ### 6.2 Gradient ascent (Forget only)
