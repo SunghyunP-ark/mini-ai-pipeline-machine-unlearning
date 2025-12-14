@@ -135,18 +135,17 @@ We train two reference models:
 
 ### 6.1 Fine‑tuning (Retain only)
 
-**Idea:** re‑train only on the retain set, hoping the forget class information fades away.
+Idea: re‑train only on the retain set, hoping the forget class information fades away.
 
-- Objective:
-  \$[\min_{\theta} \mathbb{E}_{(x_r,y_r)\in D_r} \mathrm{CE}(p_\theta(y_r\mid x_r), y_r).\]$
+- Objective: $min_{\theta} \mathbb{E}_{(x_r,y_r)\in D_r} \mathrm{CE}(p_\theta(y_r\mid x_r), y_r)$
 - Implementation: reuse standard training but feed only `retain` data.
 
 ### 6.2 Gradient ascent (Forget only)
 
-**Idea:** actively destroy the knowledge of the forget class by maximising its classification loss.
+Idea: actively destroy the knowledge of the forget class by maximising its classification loss.
 
 - Objective (per step): maximise loss on forget data:
-  $\max_{\theta} \mathbb{E}_{(x_f,y_f)\in D_f} \mathrm{CE}(p_\theta(y_f\mid x_f), y_f).$
+  $\max_{\theta} \mathbb{E}_{(x_f,y_f)\in D_f} \mathrm{CE}(p_\theta(y_f\mid x_f), y_f)$
   In code this is implemented by minimising the negative loss on `forget` data.
   
 - Very aggressive and can cause catastrophic forgetting on retain classes.
@@ -156,7 +155,7 @@ We train two reference models:
 Idea: first confuse the model on the forget class, then separate forget and retain outputs while healing the retain performance.
 
 1. Stage 1 – enforce a uniform distribution on the forget data
-   $\min_{\theta} \mathbb{E}_{x_f\in D_f} D_\mathrm{KL}(u\,\|\,p_\theta(\cdot\mid x_f))\$  
+   $\min_{\theta} \mathbb{E}_{x_f\in D_f} D_\mathrm{KL}(u\,\|\,p_\theta(\cdot\mid x_f))$  
    where $u$ is the uniform distribution over the ten classes. This is applied once to break the model’s confidence on forget samples.
 
 2. Stage 2 – optimize the sum of two terms:
