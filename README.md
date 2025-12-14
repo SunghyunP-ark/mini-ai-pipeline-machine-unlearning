@@ -146,26 +146,27 @@ We train two reference models:
 **Idea:** actively destroy the knowledge of the forget class by maximising its classification loss.
 
 - Objective (per step): maximise loss on forget data:
-  \$[\max_{\theta} \mathbb{E}_{(x_f,y_f)\in D_f} \mathrm{CE}(p_\theta(y_f\mid x_f), y_f).\]$
+  $\max_{\theta} \mathbb{E}_{(x_f,y_f)\in D_f} \mathrm{CE}(p_\theta(y_f\mid x_f), y_f).$
   In code this is implemented by minimising the negative loss on `forget` data.
+  
 - Very aggressive and can cause catastrophic forgetting on retain classes.
 
 ### 6.3 2‑Stage unlearning (ours)
 
-**Idea:** first confuse the model on the forget class, then separate forget and retain outputs while healing the retain performance.
+Idea: first confuse the model on the forget class, then separate forget and retain outputs while healing the retain performance.
 
-1. **Stage 1 ** – enforce a uniform distribution on the forget data:
-   \$[\min_{\theta} \mathbb{E}_{x_f\in D_f} D_\mathrm{KL}(u\,\|\,p_\theta(\cdot\mid x_f))\]$  
+1. Stage 1 – enforce a uniform distribution on the forget data
+   $\min_{\theta} \mathbb{E}_{x_f\in D_f} D_\mathrm{KL}(u\,\|\,p_\theta(\cdot\mid x_f))\$  
    where $u$ is the uniform distribution over the ten classes. This is applied once to break the model’s confidence on forget samples.
 
-2. **Stage 2 ** – optimize the sum of two terms:
-   - **Contrastive loss**: reduce the similarity between forget outputs and retain outputs:
-     \$[\ell_{\text{con}}(Z_f,Z_r) = \frac{1}{m}\sum_{i=1}^m -\log\mathrm{softmax}(Z_fZ_r^\top)_{i,:}\]$
+2. Stage 2 – optimize the sum of two terms:
+   - **Contrastive loss**: reduce the similarity between forget outputs and retain outputs
+     $\ell_{\text{con}}(Z_f,Z_r) = \frac{1}{m}\sum_{i=1}^m -\log\mathrm{softmax}(Z_fZ_r^\top)_{i,:}$
      thereby pushing forget representations away from retain representations.
-   - **Retain loss**: standard cross entropy on retain data:
-     \$[\ell_{\text{ret}}(\theta;B_r) = \frac{1}{m}\sum_j -\log p_\theta(y_r^{(j)}\mid x_r^{(j)}).\]$
-   - The final loss for Stage 2 is:
-     \$[L_{\text{stage2}} = \ell_{\text{con}} + \ell_{\text{ret}}.\]$
+   - **Retain loss**: standard cross entropy on retain data
+     $\ell_{\text{ret}}(\theta;B_r) = \frac{1}{m}\sum_j -\log p_\theta(y_r^{(j)}\mid x_r^{(j)}).$
+   - The final loss for Stage 2 is
+     $L_{\text{stage2}} = \ell_{\text{con}} + \ell_{\text{ret}}$
 
 ## 7. Evaluation metrics
 
